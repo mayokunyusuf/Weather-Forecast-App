@@ -15,6 +15,9 @@ interface WeatherDao {
     @Query("SELECT * FROM weather WHERE lat BETWEEN :latitude - 0.1 AND :latitude + 0.1 AND lon BETWEEN :longitude - 0.1 AND :longitude + 0.1")
     suspend fun getWeatherByCoordinates(latitude: Double, longitude: Double): List<GetWeatherResponseBody>
 
+    @Query("SELECT * FROM weather WHERE timezone LIKE '%' || :timezone || '%'")
+    suspend fun getWeatherByTimezone(timezone: String): GetWeatherResponseBody
+
     @Query("SELECT * FROM weather")
     suspend fun getAllWeather(): List<GetWeatherResponseBody>
 }

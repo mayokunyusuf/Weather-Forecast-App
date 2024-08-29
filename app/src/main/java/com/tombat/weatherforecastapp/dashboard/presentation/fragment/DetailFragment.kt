@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.tombat.weatherforecastapp.dashboard.presentation.adapter.WeatherAdapter
+import com.tombat.weatherforecastapp.dashboard.presentation.isNetworkAvailable
 import com.tombat.weatherforecastapp.dashboard.presentation.viewmodel.WeatherViewModel
 import com.tombat.weatherforecastapp.databinding.FragmentDetailBinding
 
@@ -39,7 +40,12 @@ class DetailFragment : Fragment() {
     }
 
     private fun initViews() {
-        viewModel.loadWeather(6.45, 3.39)
+        if (requireContext().isNetworkAvailable()) {
+            viewModel.loadWeather(6.45, 3.39)
+        } else {
+            getFromDb("Lagos")
+            showError("No internet connection.")
+        }
 
         binding.searchIcon.setOnClickListener {
             if (binding.searchCityField.visibility == View.VISIBLE) {
@@ -66,9 +72,19 @@ class DetailFragment : Fragment() {
         }
     }
 
+    private fun getFromDb(city : String) {
+        viewModel.getWeatherByTimezone(city)
+        observeWeatherData()
+    }
+
     private fun fetchCoordinates(cityName: String) {
-        viewModel.getGeocode(cityName, 1)
-        observeGeocodeData()
+        if (requireContext().isNetworkAvailable()) {
+            viewModel.getGeocode(cityName, 1)
+            observeGeocodeData()
+        } else {
+            showError("No internet connection.")
+            getFromDb(cityName)
+        }
     }
 
     private fun observeGeocodeData() {

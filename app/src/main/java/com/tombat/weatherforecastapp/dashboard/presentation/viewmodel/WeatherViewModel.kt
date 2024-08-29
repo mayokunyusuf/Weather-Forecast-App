@@ -20,8 +20,6 @@ class WeatherViewModel(
     private val _weatherData = MutableLiveData<GetWeatherResponseBody>()
     val weatherData: LiveData<GetWeatherResponseBody> = _weatherData
 
-    private val _allWeatherData = MutableLiveData<List<GetWeatherResponseBody>>()
-    val allWeatherData: LiveData<List<GetWeatherResponseBody>> = _allWeatherData
 
     private val _geoocdeData = MutableLiveData<GetGeocodingResponseBodyItem>()
     val geoocdeData: LiveData<GetGeocodingResponseBodyItem> = _geoocdeData
@@ -51,11 +49,11 @@ class WeatherViewModel(
         }
     }
 
-    fun getAllWeather() {
+    fun getWeatherByTimezone(timezone: String) {
         viewModelScope.launch {
             try {
-                val weatherData = weatherDao.getAllWeather()
-                _allWeatherData.postValue(weatherData)
+                val weatherData = weatherDao.getWeatherByTimezone(timezone)
+                _weatherData.postValue(weatherData)
             } catch (e: Exception) {
                 _errorMessages.postValue(e.message ?: "Unknown error")
             }
